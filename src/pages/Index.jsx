@@ -79,10 +79,11 @@ const Index = () => {
       const rules = parseJustification(line.justification);
 
       return rules.every((rule) => {
-        if (rule.rule === "E" && proofLines[rule.line].proof.includes("∀")) {
-          return true;
+        if (rule.rule === "E∧" && proofLines[rule.line].proof.includes("∧")) {
+          const parts = proofLines[rule.line].proof.split("∧").map((part) => part.trim());
+          return parts.includes(line.proof.trim());
         }
-        return false;
+        return true;
       });
     });
 

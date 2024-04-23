@@ -8,7 +8,28 @@ const Index = () => {
   const [isValid, setIsValid] = useState(null);
   const toast = useToast();
 
+  const latexToSymbol = {
+    "\\forall": "∀",
+    "\\exists": "∃",
+    "\\wedge": "∧",
+    "\\vee": "∨",
+    "\\to": "→",
+    "\\neg": "¬",
+    "\\in": "∈",
+    "\\subseteq": "⊆",
+    "\\subset": "⊂",
+    "\\cup": "∪",
+    "\\cap": "∩",
+    "\\emptyset": "∅",
+  };
+
+  const replaceLatexCommands = (text) => {
+    const regex = /\\(forall|exists|wedge|vee|to|neg|in|subseteq|subset|cup|cap|emptyset)/g;
+    return text.replace(regex, (match) => latexToSymbol[match] || match);
+  };
+
   const handleProofChange = (index, value, field) => {
+    value = replaceLatexCommands(value);
     const newProofLines = proofLines.map((line, i) => {
       if (i === index) {
         return { ...line, [field]: value };

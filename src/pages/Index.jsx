@@ -59,18 +59,25 @@ const Index = () => {
     });
   };
 
-  const symbols = ["∀", "∃", "∧", "∨", "→", "¬"];
+  const symbols = ["∀", "∃", "∧", "∨", "→", "¬", "∈", "⊆", "⊂", "∪", "∩", "∅"];
+
+  const [lastFocused, setLastFocused] = useState(null);
+
+  const handleFocus = (event) => {
+    setLastFocused(event.target);
+  };
 
   const insertSymbol = (symbol) => {
-    const activeElement = document.activeElement;
-    const start = activeElement.selectionStart;
-    const end = activeElement.selectionEnd;
-    const text = activeElement.value;
-    const before = text.substring(0, start);
-    const after = text.substring(end, text.length);
-    activeElement.value = before + symbol + after;
-    activeElement.selectionStart = activeElement.selectionEnd = start + symbol.length;
-    activeElement.focus();
+    if (lastFocused) {
+      const start = lastFocused.selectionStart;
+      const end = lastFocused.selectionEnd;
+      const text = lastFocused.value;
+      const before = text.substring(0, start);
+      const after = text.substring(end, text.length);
+      lastFocused.value = before + symbol + after;
+      lastFocused.selectionStart = lastFocused.selectionEnd = start + symbol.length;
+      lastFocused.focus();
+    }
   };
 
   return (
@@ -90,8 +97,8 @@ const Index = () => {
         {proofLines.map((line, index) => (
           <HStack key={index} spacing={4} align="center">
             <Text minWidth="50px">{index + 1}.</Text>
-            <Input placeholder="Enter proof here..." value={line.proof} onChange={(e) => handleProofChange(index, e.target.value, "proof")} size="lg" />
-            <Input placeholder="Justification..." value={line.justification} onChange={(e) => handleProofChange(index, e.target.value, "justification")} size="lg" />
+            <Input placeholder="Enter proof here..." value={line.proof} onChange={(e) => handleProofChange(index, e.target.value, "proof")} onFocus={handleFocus} size="lg" />
+            <Input placeholder="Justification..." value={line.justification} onChange={(e) => handleProofChange(index, e.target.value, "justification")} onFocus={handleFocus} size="lg" />
             <IconButton icon={<FaPlus />} onClick={addProofLine} aria-label="Add line" />
             {proofLines.length > 1 && <IconButton icon={<FaTrash />} onClick={() => removeProofLine(index)} aria-label="Remove line" />}
           </HStack>

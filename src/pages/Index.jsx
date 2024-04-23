@@ -51,9 +51,17 @@ const Index = () => {
     }
   };
 
+  const parseJustification = (justification) => {
+    const rulePattern = /([A-Z]+) (\d+)/g;
+    let matches,
+      rules = [];
+    while ((matches = rulePattern.exec(justification)) !== null) {
+      rules.push({ rule: matches[1], line: parseInt(matches[2], 10) - 1 });
+    }
+    return rules;
+  };
+
   const validateProof = () => {
-    // This is a placeholder for proof validation logic
-    // Normally, you would integrate a logic parser and proof checker here
     let allProofsEmpty = proofLines.every((line) => line.proof.trim() === "");
     if (allProofsEmpty) {
       toast({
@@ -67,8 +75,17 @@ const Index = () => {
       return;
     }
 
-    // Simulate proof checking
-    const isValidProof = proofLines.every((line) => Math.random() > 0.5);
+    const isValidProof = proofLines.every((line, index) => {
+      const rules = parseJustification(line.justification);
+
+      return rules.every((rule) => {
+        if (rule.rule === "E" && proofLines[rule.line].proof.includes("∀")) {
+          return true;
+        }
+        return false;
+      });
+    });
+
     setIsValid(isValidProof);
 
     toast({
